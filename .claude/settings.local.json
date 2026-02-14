@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter pub get:*)",
+      "Bash(where:*)",
+      "Bash(cmd /c \"where flutter 2>nul\")",
+      "Bash(cmd /c \"dir /s /b C:\\\\flutter\\\\bin\\\\flutter.bat 2>nul\")",
+      "Bash(cmd /c \"dir /s /b C:\\\\Users\\\\pc\\\\flutter\\\\bin\\\\flutter.bat 2>nul\")",
+      "Bash(cmd /c \"dir /s /b D:\\\\flutter\\\\bin\\\\flutter.bat 2>nul\")",
+      "Bash(cmd /c \"where flutter\")",
+      "Bash(cmd /c \"dir /s /b C:\\\\src\\\\flutter\\\\bin\\\\flutter.bat 2>nul & dir /s /b C:\\\\Users\\\\pc\\\\fvm 2>nul & dir /s /b C:\\\\Users\\\\pc\\\\AppData\\\\Local\\\\Pub 2>nul & echo %PATH%\")",
+      "Bash(cmd /c \"echo %PATH%\")",
+      "WebFetch(domain:portal.combain.com)",
+      "WebFetch(domain:docs.unwiredlabs.com)"
+    ]
+  }
+}

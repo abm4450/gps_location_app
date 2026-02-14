@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شعار كفشة كبشة: دبوس موقع + علامة تحقق -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- دبوس الموقع (شكل قطرة) -->
+    <path
+        android:fillColor="#0D9488"
+        android:pathData="M54,28 C38,28 26,42 26,58 C26,74 54,92 54,92 C54,92 82,74 82,58 C82,42 70,28 54,28 Z"/>
+    <!-- دائرة بيضاء للعلامة -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M68,62 m -10,0 a 10,10 0 1,1 20,0 a 10,10 0 1,1 -20,0"/>
+    <!-- علامة التحقق (check) باللون الأخضر -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M63,58 L67,62 L73,54 L75,56 L67,65 L61,59 Z"/>
+</vector>

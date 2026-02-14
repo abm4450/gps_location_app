@@ -1,0 +1,51 @@
+name: location_spoof_detector
+description: تطبيق كشف تزوير الموقع - GPS Spoofing Detection
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  
+  # GPS Location
+  geolocator: ^11.0.0
+  geocoding: ^3.0.0
+  
+  # WiFi Information
+  network_info_plus: ^5.0.3
+  connectivity_plus: ^6.0.1
+  
+  # Permissions
+  permission_handler: ^11.3.0
+  
+  # Device Info
+  device_info_plus: ^10.1.0
+  
+  # UI
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.1.0
+  # Map (OpenStreetMap - no API key)
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.1
+  # كشف الروت
+  root_check_flutter: ^1.0.5
+  # HTTP requests for IP geolocation
+  http: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/

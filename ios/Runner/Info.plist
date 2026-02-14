@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>التطبيق يحتاج الموقع لفحص GPS و WiFi والخلوي وكشف التزوير.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>التطبيق يحتاج الموقع لفحص دقة الموقع وكشف التزوير.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>التطبيق يحتاج الموقع لفحص دقة الموقع وكشف التزوير.</string>
 </dict>
 </plist>

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,22 +8,58 @@ import 'screens/splash_screen.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  runZonedGuarded(() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
+    FlutterError.onError = (details) {
+      FlutterError.presentError(details);
+    };
+    runApp(const MyApp());
+  }, (error, stack) {
+    runApp(_ErrorApp(error: error, stack: stack));
+  });
+}
 
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarDividerColor: Colors.transparent,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ),
-  );
+/// عرض خطأ بدل الإغلاق الفوري (لتشخيص المشكلة على iOS)
+class _ErrorApp extends StatelessWidget {
+  final Object error;
+  final StackTrace stack;
 
-  runApp(const MyApp());
+  const _ErrorApp({required this.error, required this.stack});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('حدث خطأ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12),
+                Text('$error', style: const TextStyle(fontSize: 12)),
+                const SizedBox(height: 8),
+                Expanded(child: SingleChildScrollView(child: Text('$stack', style: const TextStyle(fontSize: 10)))),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -58,6 +95,20 @@ class MyApp extends StatelessWidget {
     const Color surface = Color(0xFFF8FAFC);
     const Color onSurface = Color(0xFF0F172A);
     const Color surfaceVariant = Color(0xFFF1F5F9);
+    final String? fontFamily = _safeTajawalFontFamily();
+    final TextTheme baseTextTheme = const TextTheme(
+      titleLarge: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.5),
+      titleMedium: TextStyle(fontWeight: FontWeight.w700),
+      bodyLarge: TextStyle(fontWeight: FontWeight.w500),
+      bodyMedium: TextStyle(fontWeight: FontWeight.w500),
+      labelLarge: TextStyle(fontWeight: FontWeight.w700),
+    );
+    TextTheme textTheme = baseTextTheme;
+    if (fontFamily != null) {
+      try {
+        textTheme = GoogleFonts.tajawalTextTheme(baseTextTheme);
+      } catch (_) {}
+    }
 
     return ThemeData(
       useMaterial3: true,
@@ -71,23 +122,16 @@ class MyApp extends StatelessWidget {
         outline: const Color(0xFFE2E8F0),
       ),
       scaffoldBackgroundColor: surface,
-      fontFamily: GoogleFonts.tajawal().fontFamily,
-      textTheme: GoogleFonts.tajawalTextTheme(
-        const TextTheme(
-          titleLarge: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.5),
-          titleMedium: TextStyle(fontWeight: FontWeight.w700),
-          bodyLarge: TextStyle(fontWeight: FontWeight.w500),
-          bodyMedium: TextStyle(fontWeight: FontWeight.w500),
-          labelLarge: TextStyle(fontWeight: FontWeight.w700),
-        ),
-      ),
+      fontFamily: fontFamily,
+      textTheme: textTheme,
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: surface,
         foregroundColor: onSurface,
-        titleTextStyle: GoogleFonts.tajawal(
+        titleTextStyle: TextStyle(
+          fontFamily: fontFamily,
           fontSize: 20,
           fontWeight: FontWeight.w800,
           color: onSurface,
@@ -106,12 +150,12 @@ class MyApp extends StatelessWidget {
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          textStyle: GoogleFonts.tajawal(fontSize: 16, fontWeight: FontWeight.w700),
+          textStyle: TextStyle(fontFamily: fontFamily, fontSize: 16, fontWeight: FontWeight.w700),
         ),
       ),
       tabBarTheme: TabBarThemeData(
-        labelStyle: GoogleFonts.tajawal(fontWeight: FontWeight.w700, fontSize: 13),
-        unselectedLabelStyle: GoogleFonts.tajawal(fontWeight: FontWeight.w500, fontSize: 13),
+        labelStyle: TextStyle(fontFamily: fontFamily, fontWeight: FontWeight.w700, fontSize: 13),
+        unselectedLabelStyle: TextStyle(fontFamily: fontFamily, fontWeight: FontWeight.w500, fontSize: 13),
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
       ),
@@ -125,11 +169,34 @@ class MyApp extends StatelessWidget {
     );
   }
 
+  /// تجنب تعطل iOS عند تحميل خط Tajawal
+  static String? _safeTajawalFontFamily() {
+    try {
+      return GoogleFonts.tajawal().fontFamily;
+    } catch (_) {
+      return null;
+    }
+  }
+
   ThemeData _buildDarkTheme() {
     const Color primary = Color(0xFF2DD4BF);
     const Color surface = Color(0xFF0F172A);
     const Color onSurface = Color(0xFFF8FAFC);
     const Color surfaceVariant = Color(0xFF1E293B);
+    final String? fontFamily = _safeTajawalFontFamily();
+    final TextTheme baseTextTheme = ThemeData.dark().textTheme.copyWith(
+      titleLarge: const TextStyle(fontWeight: FontWeight.w800),
+      titleMedium: const TextStyle(fontWeight: FontWeight.w700),
+      bodyLarge: const TextStyle(fontWeight: FontWeight.w500),
+      bodyMedium: const TextStyle(fontWeight: FontWeight.w500),
+      labelLarge: const TextStyle(fontWeight: FontWeight.w700),
+    );
+    TextTheme textTheme = baseTextTheme;
+    if (fontFamily != null) {
+      try {
+        textTheme = GoogleFonts.tajawalTextTheme(baseTextTheme);
+      } catch (_) {}
+    }
 
     return ThemeData(
       useMaterial3: true,
@@ -143,23 +210,16 @@ class MyApp extends StatelessWidget {
         outline: const Color(0xFF334155),
       ),
       scaffoldBackgroundColor: surface,
-      fontFamily: GoogleFonts.tajawal().fontFamily,
-      textTheme: GoogleFonts.tajawalTextTheme(
-        ThemeData.dark().textTheme.copyWith(
-              titleLarge: const TextStyle(fontWeight: FontWeight.w800),
-              titleMedium: const TextStyle(fontWeight: FontWeight.w700),
-              bodyLarge: const TextStyle(fontWeight: FontWeight.w500),
-              bodyMedium: const TextStyle(fontWeight: FontWeight.w500),
-              labelLarge: const TextStyle(fontWeight: FontWeight.w700),
-            ),
-      ),
+      fontFamily: fontFamily,
+      textTheme: textTheme,
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: surface,
         foregroundColor: onSurface,
-        titleTextStyle: GoogleFonts.tajawal(
+        titleTextStyle: TextStyle(
+          fontFamily: fontFamily,
           fontSize: 20,
           fontWeight: FontWeight.w800,
           color: onSurface,
@@ -178,12 +238,12 @@ class MyApp extends StatelessWidget {
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          textStyle: GoogleFonts.tajawal(fontSize: 16, fontWeight: FontWeight.w700),
+          textStyle: TextStyle(fontFamily: fontFamily, fontSize: 16, fontWeight: FontWeight.w700),
         ),
       ),
       tabBarTheme: TabBarThemeData(
-        labelStyle: GoogleFonts.tajawal(fontWeight: FontWeight.w700, fontSize: 13),
-        unselectedLabelStyle: GoogleFonts.tajawal(fontWeight: FontWeight.w500, fontSize: 13),
+        labelStyle: TextStyle(fontFamily: fontFamily, fontWeight: FontWeight.w700, fontSize: 13),
+        unselectedLabelStyle: TextStyle(fontFamily: fontFamily, fontWeight: FontWeight.w500, fontSize: 13),
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
       ),
